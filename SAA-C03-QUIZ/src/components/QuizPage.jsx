@@ -2,9 +2,39 @@ import { useState } from "react";
 import "../App.css";
 
 export default function QuizPage({ title, data }) {
-  const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState(null); // index: null이면 입력창 보여줌
   const [selected, setSelected] = useState(null);
   const [showAnswer, setShowAnswer] = useState(false);
+  const [inputValue, setInputValue] = useState("");
+
+  if (index === null) {
+    return (
+      <div className="quiz-container">
+        <h1>{title}</h1>
+        <p>어디서부터 시작할까요? (문제 번호 입력)</p>
+        <input
+          type="number"
+          min="1"
+          max={data.length}
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+        />
+        <button
+          className="next-btn"
+          onClick={() => {
+            const num = parseInt(inputValue);
+            if (!isNaN(num) && num >= 1 && num <= data.length) {
+              setIndex(num - 1); // 0-based index
+            } else {
+              alert("유효한 번호를 입력해주세요 (1 ~ " + data.length + ")");
+            }
+          }}
+        >
+          시작하기
+        </button>
+      </div>
+    );
+  }
 
   const quiz = data[index] || {};
   const isCorrect = selected === quiz.answer;
